@@ -11,3 +11,31 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Jogo {
+  id           String   @id @default(uuid()) @db.Uuid
+  nome         String   @db.VarChar(100)
+  genero       String   @db.VarChar(60)
+  dtLancamento DateTime @map("dt_lancamento")
+  preco        Decimal  @db.Decimal(10, 2)
+  tamanho      Int
+  multiplayer  Boolean
+
+  personagens Personagem[]
+
+  @@map("jogo")
+}
+
+model Personagem {
+  id           String @id @default(uuid()) @db.Uuid
+  nome         String @db.VarChar(100)
+  habilidades  String @db.Text
+  idade        Int
+  forca        Int
+  inteligencia Int
+
+  idJogo String @db.Uuid
+  jogo   Jogo   @relation(fields: [idJogo], references: [id])
+
+  @@map("personagem")
+}
