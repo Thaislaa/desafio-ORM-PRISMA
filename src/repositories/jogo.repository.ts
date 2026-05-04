@@ -1,3 +1,5 @@
+import { AppError } from "../config/AppError.js";
+import { handleError } from "../config/config.handler.js";
 import type { CreateJogoDto } from "../dtos/create-jogo.dto.js";
 import type { UpdateJogoDto } from "../dtos/update-jogo.dto.js";
 import { prisma } from "../lib/prisma.js";
@@ -18,7 +20,7 @@ export class JogoRepository {
         })
 
         if (!jogoEncontrado) {
-            throw new Error("Jogo não encontrado, verifique o id")
+            throw new AppError("Jogo não encontrado", 404)
         }
 
         return jogoEncontrado
@@ -26,37 +28,49 @@ export class JogoRepository {
 
     // CRIAR JOGO
     public async criar(dados: CreateJogoDto) {
-        const jogo = await prisma.jogo.create({
-            data: dados
-        })
+        try {
+            const jogo = await prisma.jogo.create({
+                data: dados
+            })
 
-        return jogo
+            return jogo
+        } catch (error) {
+            return handleError(error)
+        }
     }
 
     // ATUALIZAR JOGO
     public async atualizar(id: string, dados: UpdateJogoDto) {
-        await this.obterPorId(id)
+        try {
+            await this.obterPorId(id)
 
-        const jogo = await prisma.jogo.update({
-            where: {
-                id
-            },
-            data: dados
-        })
+            const jogo = await prisma.jogo.update({
+                where: {
+                    id
+                },
+                data: dados
+            })
 
-        return jogo
+            return jogo
+        } catch (error) {
+            return handleError(error)
+        }
     }
 
     // DELETAR JOGO
     public async deletar(id: string) {
-        await this.obterPorId(id)
+        try {
+            await this.obterPorId(id)
 
-        const jogo = await prisma.jogo.delete({
-            where: {
-                id
-            }
-        })
+            const jogo = await prisma.jogo.delete({
+                where: {
+                    id
+                }
+            })
 
-        return jogo
+            return jogo
+        } catch (error) {
+            return handleError(error)
+        }
     }
 }

@@ -1,3 +1,5 @@
+import { AppError } from "../config/AppError.js";
+import { handleError } from "../config/config.handler.js";
 import type { CreatePersonagemDto } from "../dtos/create-personagem.dto.js";
 import type { UpdatePersonagemDto } from "../dtos/update-personagem.dto.js";
 import { prisma } from "../lib/prisma.js";
@@ -19,7 +21,7 @@ export class PersonagemRepository {
         })
 
         if (!personagemEncontrado) {
-            throw new Error("Personagem não encontrado, verifique o id")
+            throw new AppError("Personagem não encontrado", 404)
         }
 
         return personagemEncontrado
@@ -27,39 +29,51 @@ export class PersonagemRepository {
 
     // CRIAR PERSONAGEM
     public async criar(dados: CreatePersonagemDto) {
-        const jogoRepository = new JogoRepository()
-        await jogoRepository.obterPorId(dados.idJogo)
+        try {
+            const jogoRepository = new JogoRepository()
+            await jogoRepository.obterPorId(dados.idJogo)
 
-        const personagem = await prisma.personagem.create({
-            data: dados
-        })
+            const personagem = await prisma.personagem.create({
+                data: dados
+            })
 
-        return personagem
+            return personagem
+        } catch (error) {
+            return handleError(error)
+        }
     }
 
     // ATUALIZAR PERSONAGEM 
     public async atualizar(id: string, dados: UpdatePersonagemDto) {
-        await this.obterPorId(id)
+        try {
+            await this.obterPorId(id)
 
-        const personagem = await prisma.personagem.update({
-            where: {
-                id
-            },
-            data: dados
-        })
+            const personagem = await prisma.personagem.update({
+                where: {
+                    id
+                },
+                data: dados
+            })
 
-        return personagem
+            return personagem
+        } catch (error) {
+            return handleError(error)
+        }
     }
 
     public async deletar(id: string) {
-        await this.obterPorId(id)
+        try {
+            await this.obterPorId(id)
 
-        const personagem = await prisma.personagem.delete({
-            where: {
-                id
-            }
-        })
+            const personagem = await prisma.personagem.delete({
+                where: {
+                    id
+                }
+            })
 
-        return personagem
+            return personagem
+        } catch (error) {
+            return handleError(error)
+        }
     }
 }
