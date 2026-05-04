@@ -107,4 +107,15 @@ export class PersonagemRepository {
             handleError(error)
         }
     }
+
+    // LISTAR PERSONAGENS COM SEUS JOGOS
+    public async listarPersonagensComSeusJogos() {
+        const personagem = await prisma.personagem.findMany({
+            include: {
+                jogo: true
+            }
+        })
+
+        return personagem
+    }
 }

@@ -76,6 +76,9 @@ async function main() {
     //     }
     // })
     // console.log("JOGO E PERSONAGEM CRIADO: ", criarJogoPersonagem);
+
+    // const listarPersonagensJogos = await personagemRepository.listarPersonagensComSeusJogos();
+    // console.log(listarPersonagensJogos);
 }
 
 main()
