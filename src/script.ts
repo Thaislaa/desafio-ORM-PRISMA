@@ -1,8 +1,10 @@
 import { JogoRepository } from "./repositories/jogo.repository.js";
 import { PersonagemRepository } from "./repositories/personagem.repository.js";
+import { PersonagemService } from "./services/personagem.service.js";
 
 const jogoRepository = new JogoRepository()
 const personagemRepository = new PersonagemRepository()
+const personagemService = new PersonagemService()
 
 async function main() {
     // const listarJogos = await jogoRepository.listar();
@@ -60,19 +62,19 @@ async function main() {
     // const deletarPersonagem = await personagemRepository.deletar("df7e5028-8ce0-4e8d-b940-c7e139362b8b")
     // console.log("PERSONAGEM DELETADO: ", deletarPersonagem);
 
-    // const criarJogoPersonagem = await personagemRepository.criarJogoPersonagem({
-    //     nome: "Arena Champions",
-    //     genero: "Ação",
-    //     dtLancamento: new Date("2022-05-10"),
-    //     preco: 199,
-    //     tamanho: 45,
+    // const criarJogoPersonagem = await personagemService.criarJogoPersonagem({
+    //     nome: "Speed Race",
+    //     genero: "Corrida",
+    //     dtLancamento: new Date("2021-03-15"),
+    //     preco: 99,
+    //     tamanho: 30,
     //     multiplayer: true,
     //     personagem: {
-    //         nome: "Ragnar",
-    //         habilidades: "Combate corpo a corpo e uso de machado",
-    //         idade: 35,
-    //         forca: 90,
-    //         inteligencia: 60,
+    //         nome: "Lucas",
+    //         habilidades: "Direção avançada e reflexos rápidos",
+    //         idade: 28,
+    //         forca: 60,
+    //         inteligencia: 75,
     //     }
     // })
     // console.log("JOGO E PERSONAGEM CRIADO: ", criarJogoPersonagem);
