@@ -59,6 +59,23 @@ async function main() {
 
     // const deletarPersonagem = await personagemRepository.deletar("df7e5028-8ce0-4e8d-b940-c7e139362b8b")
     // console.log("PERSONAGEM DELETADO: ", deletarPersonagem);
+
+    // const criarJogoPersonagem = await personagemRepository.criarJogoPersonagem({
+    //     nome: "Arena Champions",
+    //     genero: "Ação",
+    //     dtLancamento: new Date("2022-05-10"),
+    //     preco: 199,
+    //     tamanho: 45,
+    //     multiplayer: true,
+    //     personagem: {
+    //         nome: "Ragnar",
+    //         habilidades: "Combate corpo a corpo e uso de machado",
+    //         idade: 35,
+    //         forca: 90,
+    //         inteligencia: 60,
+    //     }
+    // })
+    // console.log("JOGO E PERSONAGEM CRIADO: ", criarJogoPersonagem);
 }
 
 main()

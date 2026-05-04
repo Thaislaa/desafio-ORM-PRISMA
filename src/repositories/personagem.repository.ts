@@ -1,5 +1,6 @@
 import { AppError } from "../config/AppError.js";
 import { handleError } from "../config/config.handler.js";
+import type { CreateJogoPersonagemDto } from "../dtos/create-jogo-personagem.dto.js";
 import type { CreatePersonagemDto } from "../dtos/create-personagem.dto.js";
 import type { UpdatePersonagemDto } from "../dtos/update-personagem.dto.js";
 import { prisma } from "../lib/prisma.js";
@@ -61,6 +62,7 @@ export class PersonagemRepository {
         }
     }
 
+    // DELETAR PERSONAGEM
     public async deletar(id: string) {
         try {
             await this.obterPorId(id)
@@ -76,4 +78,34 @@ export class PersonagemRepository {
             return handleError(error)
         }
     }
+
+    // CRIAR JOGO E PERSONAGEM
+    public async criarJogoPersonagem(dados: CreateJogoPersonagemDto) {
+        try {
+            return await prisma.$transaction(async (tx) => {
+                const jogo = await tx.jogo.create({
+                    data: {
+                        nome: dados.nome,
+                        genero: dados.genero,
+                        dtLancamento: dados.dtLancamento,
+                        preco: dados.preco,
+                        tamanho: dados.tamanho,
+                        multiplayer: dados.multiplayer
+                    }
+                })
+
+                const personagem = await tx.personagem.create({
+                    data: {
+                        ...dados.personagem,
+                        idJogo: jogo.id
+                    }
+                })
+
+                return { jogo, personagem }
+            })
+        } catch (error) {
+            handleError(error)
+        }
+    }
+
 }
