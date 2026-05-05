@@ -1,5 +1,3 @@
-import { AppError } from "../config/AppError.js";
-import { handleError } from "../config/config.handler.js";
 import type { CreatePersonagemDto } from "../dtos/create-personagem.dto.js";
 import type { UpdatePersonagemDto } from "../dtos/update-personagem.dto.js";
 import { prisma } from "../lib/prisma.js";
@@ -20,62 +18,39 @@ export class PersonagemRepository {
             }
         })
 
-        if (!personagemEncontrado) {
-            throw new AppError("Personagem não encontrado", 404)
-        }
-
         return personagemEncontrado
     }
 
     // CRIAR PERSONAGEM
     public async criar(dados: CreatePersonagemDto) {
-        try {
-            const jogoRepository = new JogoRepository()
-            await jogoRepository.obterPorId(dados.idJogo)
+        const personagem = await prisma.personagem.create({
+            data: dados
+        })
 
-            const personagem = await prisma.personagem.create({
-                data: dados
-            })
-
-            return personagem
-        } catch (error) {
-            return handleError(error)
-        }
+        return personagem
     }
 
     // ATUALIZAR PERSONAGEM 
     public async atualizar(id: string, dados: UpdatePersonagemDto) {
-        try {
-            await this.obterPorId(id)
+        const personagem = await prisma.personagem.update({
+            where: {
+                id
+            },
+            data: dados
+        })
 
-            const personagem = await prisma.personagem.update({
-                where: {
-                    id
-                },
-                data: dados
-            })
-
-            return personagem
-        } catch (error) {
-            return handleError(error)
-        }
+        return personagem
     }
 
     // DELETAR PERSONAGEM
     public async deletar(id: string) {
-        try {
-            await this.obterPorId(id)
+        const personagem = await prisma.personagem.delete({
+            where: {
+                id
+            }
+        })
 
-            const personagem = await prisma.personagem.delete({
-                where: {
-                    id
-                }
-            })
-
-            return personagem
-        } catch (error) {
-            return handleError(error)
-        }
+        return personagem
     }
 
     // LISTAR PERSONAGENS COM SEUS JOGOS
