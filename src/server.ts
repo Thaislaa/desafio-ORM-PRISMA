@@ -1,11 +1,13 @@
 import express from "express";
 import { JogoRepository } from "./repositories/jogo.repository.js";
 import { handleError } from "./config/error.handler.js";
+import { PersonagemRepository } from "./repositories/personagem.repository.js";
 
 const app = express()
 app.use(express.json())
 
 const jogoRepository = new JogoRepository()
+const personagemRepository = new PersonagemRepository()
 
 // -------- JOGOS --------
 
@@ -107,6 +109,124 @@ app.delete("/jogos/:idJogo", async (req, res) => {
             ok: true,
             message: "Jogo deletado com sucesso",
             data: jogo
+        })
+    } catch (error) {
+        return handleError(error, res)
+    }
+})
+
+// -------- PERSONAGEM --------
+
+// LISTAR PERSONAGEM
+app.get("/personagens", async (req, res) => {
+    try {
+        const personagens = await personagemRepository.listar()
+        return res.status(200).send({
+            ok: true,
+            message: "Personagens listados com sucesso",
+            data: personagens
+        })
+    } catch (error) {
+        return handleError(error, res)
+    }
+})
+
+// CRIAR PERSONAGEM 
+app.post("/personagens", async (req, res) => {
+    try {
+        const { nome, habilidades, idade, forca, inteligencia, idJogo } = req.body
+
+        if (!nome || !habilidades || !idJogo || idade === undefined || forca === undefined || inteligencia === undefined) {
+            return res.status(400).send({
+                ok: false,
+                message: "Campos não foram informados corretamente"
+            })
+        }
+
+        const jogoEncontrado = await jogoRepository.obterPorId(idJogo)
+        if (!jogoEncontrado) {
+            return res.status(404).send({
+                ok: false,
+                message: "Jogo não encontrado"
+            })
+        }
+
+        const personagem = await personagemRepository.criar({
+            nome,
+            habilidades,
+            idade,
+            forca,
+            inteligencia,
+            idJogo
+        })
+
+        return res.status(201).send({
+            ok: true,
+            message: "Personagem criado com sucesso",
+            data: personagem
+        })
+    } catch (error) {
+        return handleError(error, res)
+    }
+})
+
+// ATUALIZAR PERSONAGEM 
+app.put("/personagens/:idPersonagem", async (req, res) => {
+    try {
+        const { nome, habilidades, idade, forca, inteligencia } = req.body
+        const { idPersonagem } = req.params
+
+        if (!nome && !habilidades && idade === undefined && forca === undefined && inteligencia === undefined) {
+            return res.status(400).send({
+                ok: false,
+                message: "Informe pelo menos um campo"
+            })
+        }
+
+        const personagemEncontrado = await personagemRepository.obterPorId(idPersonagem)
+        if (!personagemEncontrado) {
+            return res.status(404).send({
+                ok: false,
+                message: "Personagem não encontrado"
+            })
+        }
+
+        const personagem = await personagemRepository.atualizar(idPersonagem, {
+            nome,
+            habilidades,
+            idade,
+            forca,
+            inteligencia
+        })
+
+        return res.status(200).send({
+            ok: true,
+            message: "Personagem atualizado com sucesso",
+            data: personagem
+        })
+    } catch (error) {
+        return handleError(error, res)
+    }
+})
+
+// DELETAR PERSONAGEM
+app.delete("/personagens/:idPersonagem", async (req, res) => {
+    try {
+        const { idPersonagem } = req.params
+
+        const personagemEncontrado = await personagemRepository.obterPorId(idPersonagem)
+        if (!personagemEncontrado) {
+            return res.status(404).send({
+                ok: false,
+                message: "Personagem não encontrado"
+            })
+        }
+
+        const personagem = await personagemRepository.deletar(idPersonagem)
+        return res.status(200).send({
+            ok: true,
+            message: "Personagem deletado com sucesso",
+            data: personagem
         })
     } catch (error) {
         return handleError(error, res)
