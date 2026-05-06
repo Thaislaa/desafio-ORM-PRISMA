@@ -233,6 +233,19 @@ app.delete("/personagens/:idPersonagem", async (req, res) => {
     }
 })
 
+app.get("/personagemJogo", async (req, res) => {
+    try {
+        const personagemJogo = await personagemRepository.listarPersonagensComSeusJogos()
+        return res.status(200).send({
+            ok: true,
+            message: "Personagens com seus jogos listados com sucesso",
+            data: personagemJogo
+        })
+    } catch (error) {
+        return handleError(error, res)
+    }
+})
+
 app.listen(3333, () => {
     console.log("API está rodando na porta 3333")
 })
