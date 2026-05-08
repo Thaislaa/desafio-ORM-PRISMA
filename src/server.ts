@@ -2,12 +2,14 @@ import express from "express";
 import { JogoRepository } from "./repositories/jogo.repository.js";
 import { handleError } from "./config/error.handler.js";
 import { PersonagemRepository } from "./repositories/personagem.repository.js";
+import { PersonagemService } from "./services/personagem.service.js";
 
 const app = express()
 app.use(express.json())
 
 const jogoRepository = new JogoRepository()
 const personagemRepository = new PersonagemRepository()
+const personagemService = new PersonagemService()
 
 // -------- JOGOS --------
 
@@ -241,6 +243,38 @@ app.get("/personagemJogo", async (req, res) => {
             message: "Personagens com seus jogos listados com sucesso",
             data: personagemJogo
         })
+    } catch (error) {
+        return handleError(error, res)
+    }
+})
+
+// CRIA JOGO E PERSONAGEM
+app.post("/personagemJogo", async (req, res) => {
+    try {
+        const { nome, genero, dtLancamento, preco, tamanho, multiplayer, personagem } = req.body
+
+        const jogoPersonagem = await personagemService.criarJogoPersonagem({
+            nome,
+            genero,
+            dtLancamento,
+            preco,
+            tamanho,
+            multiplayer,
+            personagem: {
+                nome: personagem.nome,
+                habilidades: personagem.habilidades,
+                idade: personagem.idade,
+                forca: personagem.forca,
+                inteligencia: personagem.inteligencia
+            }
+        })
+
+        return res.status(201).send({
+            ok: true,
+            message: "Jogo e personagem criado com sucesso",
+            data: jogoPersonagem
+        })
+        
     } catch (error) {
         return handleError(error, res)
     }
