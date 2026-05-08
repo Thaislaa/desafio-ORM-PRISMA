@@ -253,6 +253,20 @@ app.post("/personagemJogo", async (req, res) => {
     try {
         const { nome, genero, dtLancamento, preco, tamanho, multiplayer, personagem } = req.body
 
+        if (!nome ||!genero ||!dtLancamento ||preco === undefined ||tamanho === undefined ||multiplayer === undefined) {
+            return res.status(400).send({
+                ok: false,
+                message: "Campos do jogo não foram informados corretamente"
+            })
+        }
+
+        if (!personagem || !personagem.nome || !personagem.habilidades || personagem.idade === undefined || personagem.forca === undefined || personagem.inteligencia === undefined) {
+            return res.status(400).send({
+                ok: false,
+                message: "Campos do personagem não foram informados corretamente"
+            })
+        }
+
         const jogoPersonagem = await personagemService.criarJogoPersonagem({
             nome,
             genero,
